@@ -43,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   SizedBox(height: 60,),
                    Text(
                      
-                     'Sign Up',
+                     _isLogin ? 'Login' : 'Sign Up',
                      
                      style: Theme.of(context).textTheme.headline2,
                      ),
@@ -127,7 +127,7 @@ class _AuthScreenState extends State<AuthScreen> {
                shape: RoundedRectangleBorder(
                  borderRadius: BorderRadius.circular(30),
                ),
-               child: Text('Create Account', style: TextStyle(color: Colors.white),),
+               child: Text('CREATE ACCOUNT', style: TextStyle(color: Colors.white),),
             )
           ],
         ) 
@@ -136,11 +136,11 @@ class _AuthScreenState extends State<AuthScreen> {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-        Text('Already have an account?', style: TextStyle(color: Colors.grey),),
+        Text('Already have an account? ', style: TextStyle(color: Colors.grey),),
         InkWell(
           onTap: (){
             setState(() {
-              //_login = true;
+              _isLogin = true;
             });
           }, 
           child: Text('Sign in', style: TextStyle(color: Colors.blue),)
@@ -152,7 +152,68 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget buildLoginForm() {
-    return Form();
+    return Column(
+      children: [
+        Form(
+          child: Column(children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Username',
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: const BorderSide(width: 2)),
+              ),
+            ),
+
+            SizedBox(height: 17,),
+
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock),  
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: const BorderSide(width: 2)),
+              ),
+              
+            ),
+            SizedBox(height: 40),
+            RaisedButton(
+              
+              padding: EdgeInsets.fromLTRB(60, 20, 60, 20),
+              color: Theme.of(context).primaryColor,
+               onPressed: () {},
+               shape: RoundedRectangleBorder(
+                 borderRadius: BorderRadius.circular(30),
+               ),
+               child: Text('LOGIN', 
+               style: TextStyle(color: Colors.white,),
+              
+               ),
+            )
+            
+          ],
+          ),
+        ),
+        SizedBox(height: 20,),
+        Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        Text('Not a member yet? ', style: TextStyle(color: Colors.grey),),
+        InkWell(
+          onTap: (){
+            setState(() {
+              _isLogin = false;
+            });
+          }, 
+          child: Text('Sign up', style: TextStyle(color: Colors.blue),)
+          )
+        ],
+        ),
+      ],
+
+    );
   }
 
   void _togglePassword(){
