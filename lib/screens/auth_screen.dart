@@ -18,7 +18,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final _confirmPasswordFocusNode = FocusNode();
   final _loginFormKey = GlobalKey<FormState>();
   final _signUpKey = GlobalKey<FormState>();
-
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  
   @override
   void initState() {
     _passwordFocusNode.addListener(() {
@@ -46,6 +47,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return Scaffold(
+      key: _scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
           alignment: Alignment.center,
@@ -159,7 +161,7 @@ class _AuthScreenState extends State<AuthScreen> {
           RaisedButton(
             padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
             color: Theme.of(context).primaryColor,
-            onPressed: _validateSignUpForm,
+            onPressed: () => _validateSignUpForm(),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -206,8 +208,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   prefixIcon: Icon(Icons.person),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(width: 2)),
+                      borderSide: const BorderSide(width: 2)
+                  ),
                 ),
+                onSaved: (value) => _username = value
               ),
               SizedBox(
                 height: 17,
@@ -218,14 +222,18 @@ class _AuthScreenState extends State<AuthScreen> {
                   prefixIcon: Icon(Icons.lock),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(width: 2)),
+                      borderSide: const BorderSide(width: 2)
+                  ),
                 ),
+                obscureText: true,
+                
+                onSaved: (value) => _password = value,
               ),
               SizedBox(height: 40),
               RaisedButton(
                 padding: const EdgeInsets.fromLTRB(60, 20, 60, 20),
                 color: Theme.of(context).primaryColor,
-                onPressed: () {},
+                onPressed: _login,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -286,12 +294,29 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  void _login() async{
+   _loginFormKey.currentState.save();
+   try {
+     await FirebaseAuth.instance.signInWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
+   }
+   catch(err){
+     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Username or password incorrect'),));
+     print(err);
+   }
+
+  }
+
   void createAccount() async {
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
     } 
     catch(err) {
-      print(err);
+      if(err.toString().contains('email-already-in-use')){
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Username already in use')));
+      }
+      return;
     }
+
   }
+  
 }
