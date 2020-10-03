@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final _confirmPasswordFocusNode = FocusNode();
   final _loginFormKey = GlobalKey<FormState>();
   final _signUpKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -278,8 +278,20 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _validateSignUpForm(){
-        _signUpKey.currentState.save();
+    _signUpKey.currentState.save();
+    bool isValid = _signUpKey.currentState.validate();
 
-    _signUpKey.currentState.validate();
+    if(isValid) {
+      createAccount();
+    }
+  }
+
+  void createAccount() async {
+    try{
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
+    } 
+    catch(err) {
+      print(err);
+    }
   }
 }
