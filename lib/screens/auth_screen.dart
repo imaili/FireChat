@@ -289,7 +289,7 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '$_username@firechat.com', password: _password);
-      Navigator.of(context).pushNamed(ChatsScreen.route, arguments: {'user': credential.user,});
+      Navigator.of(context).pushReplacementNamed(ChatsScreen.route, arguments: {'user': credential.user,});
     } catch (err) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Username or password incorrect'),
@@ -301,7 +301,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void createAccount() async {
     try {
       UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
-      await FirebaseFirestore.instance.collection('users').doc(credential.user.uid).set({});
+      await FirebaseFirestore.instance.collection('users').doc(credential.user.uid).set({'username' : _username}); 
       Navigator.of(context).pushReplacementNamed(ChatsScreen.route, arguments: {'user': credential.user,});
     } 
     catch (err) {
