@@ -1,3 +1,4 @@
+import 'package:fire_chat/screens/chats_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,11 @@ class MyApp extends StatelessWidget {
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
               home: AuthScreen(),
+              routes: {
+                AuthScreen.route: (ctx) => AuthScreen(),
+                ChatsScreen.route: (ctx) => ChatsScreen(),
+
+              },
             );
           }
           else
