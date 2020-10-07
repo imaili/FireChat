@@ -117,7 +117,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 onSaved: (value) => {_password = value},
                 validator: (value) {
-                  print(value);
                   if (value.length < 8)
                     return 'Must be at least 8 characters long';
                   else if (!value.contains(RegExp(r'[a-z]')) ||
@@ -287,9 +286,10 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() async {
     _loginFormKey.currentState.save();
     try {
-      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '$_username@firechat.com', password: _password);
-      Navigator.of(context).pushReplacementNamed(ChatsScreen.route, arguments: {'user': credential.user,});
+      
+      Navigator.of(context).pushReplacementNamed(ChatsScreen.route);
     } catch (err) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Username or password incorrect'),
@@ -300,9 +300,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void createAccount() async {
     try {
-      UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
-      await FirebaseFirestore.instance.collection('users').doc(credential.user.uid).set({'username' : _username}); 
-      Navigator.of(context).pushReplacementNamed(ChatsScreen.route, arguments: {'user': credential.user,});
+      
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
+      Navigator.of(context).pushReplacementNamed(ChatsScreen.route);
     } 
     catch (err) {
       print(err);

@@ -43,6 +43,10 @@ app.*.map.json
 #api keys
 android/app/google-services.json
 
+#node_modules
+cloud_functions/functions/node_modules
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
+/

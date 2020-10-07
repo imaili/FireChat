@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
                 textTheme: TextTheme(headline2: TextStyle(color: Colors.blue)),
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-              home: ChatsScreen(),
+              home: AuthScreen(),
               routes: {
                 AuthScreen.route: (ctx) => AuthScreen(),
                 ChatsScreen.route: (ctx) => ChatsScreen(),
