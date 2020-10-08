@@ -90,11 +90,23 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   void _addContact(String username) async {
     
-    await FirebaseFirestore.instance
-            .collection('addContactRequest')
-            .doc()
-            .set({'userId': _user.uid, 'contactUsername': username});
-
+    final docRef = await FirebaseFirestore.instance
+                          .collection('addContactRequest')
+                          .add({'userId': _user.uid, 'contactUsername': username});
+            
+    FirebaseFirestore.instance
+            .collection('addContactResponse')
+            .doc(_user.uid)
+            .snapshots()
+            .listen((event) {
+              
+               if(event.data()['docId'] == docRef.id){
+                 print('yay');
+                 return;
+               }
+            });
+              
+    
     /*
     } else {
       showDialog(

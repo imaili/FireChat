@@ -288,43 +288,50 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '$_username@firechat.com', password: _password);
-      
+
       Navigator.of(context).pushReplacementNamed(ChatsScreen.route);
-    } catch (err) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Username or password incorrect'),
-      ));
-      print(err);
+    } 
+    catch (err) {
+      if (err.toString().contains('network-request-failed')) {
+        _showNetworkErrorDialog();
+      } 
+      else {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Username or password incorrect'),
+        ));
+        print(err);
+      }
     }
   }
 
   void createAccount() async {
     try {
-      
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$_username@firechat.com', password: _password);
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: '$_username@firechat.com', password: _password);
       Navigator.of(context).pushReplacementNamed(ChatsScreen.route);
-    } 
-    catch (err) {
+    } catch (err) {
       print(err);
       if (err.toString().contains('network-request-failed')) {
-        showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-                  title: Text('Something went wrong'),
-                  content: Text(
-                      'Please check your internet connection and try again'),
-                  actions: [
-                    FlatButton(
-                        onPressed: Navigator.of(context).pop, child: Text('OK'))
-                  ],
-                ));
-      }
-
-      if (err.toString().contains('email-already-in-use')) {
+        _showNetworkErrorDialog();
+      } else if (err.toString().contains('email-already-in-use')) {
         _scaffoldKey.currentState
             .showSnackBar(SnackBar(content: Text('Username already in use')));
       }
       return;
     }
+  }
+
+  void _showNetworkErrorDialog() {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('Something went wrong'),
+              content:
+                  Text('Please check your internet connection and try again'),
+              actions: [
+                FlatButton(
+                    onPressed: Navigator.of(context).pop, child: Text('OK'))
+              ],
+            ));
   }
 }

@@ -11,16 +11,11 @@ admin.initializeApp()
 
 
 
-exports.addNewContact = functions.firestore.document('addContactRequest/{docId}')
-                                    .onCreate(async (snap, _) => {
-                                        const userId = snap.data()
-                                        console.log(userId)/*
-                                        const contactUsername = change.data.arguments['contactUsername']
-                                        
-                                        
-                                        //asd
-                                        
-                                        console.log("asdf")
+exports.addNewContact = functions.region('europe-west1').firestore.document('addContactRequest/{docId}')
+                                    .onCreate(async (snap, context) => {
+                                        const userId = snap.data()['userId']
+                                        const contactUsername = snap.data()['contactUsername']
+                                        const docId = context.params.docId
                                         
                                         const checks = [
                                             checkContactUsernameExists(contactUsername),
@@ -28,21 +23,38 @@ exports.addNewContact = functions.firestore.document('addContactRequest/{docId}'
                                         ]
                                         const [contactUsernameExists, ContactNotAdded] = await Promise.all(checks)
 
-                                        if(!contactUsernameExists) {
-                                            await response('addContactResponse/'+userId+'/responses', {'contactUsernameExists': false})
-                                        }*/
+                                        if(contactUsernameExists) {
+                                            await response('addContactResponse/'+userId, {'contactUsernameExists': true, 'docId': docId})
+                                        }
+                                        else await response('addContactResponse/'+userId, {'contactUsernameExists': false, 'docId':docId})
+                                        
 
 
                                     })
                                 
-/*
-exports.createAccount = functions.auth.user().onCreate((user) => {
+
+exports.createAccount = functions.region('europe-west1').auth.user().onCreate((user) => {
     return admin.firestore().doc('users/'+user.uid).set({'username': user.email.split('@')[0]})
 })
 
 
+async function checkContactUsernameExists(contactUsername) {
+    try{
+        await admin.auth().getUserByEmail(contactUsername+'@firechat.com');
+        return true;
+    } catch(error){
+        console.log(error)
+        return false;
+
+    }
+    
+
+}
+function checkContactNotAdded(contactUsername) {
+    return false;
+}
 
 async function response(dbPath, params){
-    admin.firestore().collection(dbPath).add(params)
+    admin.firestore().doc(dbPath).set(params)
 
-}*/
+}
