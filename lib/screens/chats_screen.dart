@@ -20,16 +20,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
         title: Text('Chats'),
       ),
       body: Container(),
-      
-      
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddContactSheet(context),
         backgroundColor: Colors.lightBlue,
         child: Icon(Icons.add, color: Colors.white),
       ),
     );
-
   }
+
   void _showAddContactSheet(BuildContext ctx) {
     final _controller = TextEditingController();
     showModalBottomSheet(
@@ -89,41 +87,36 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   void _addContact(String username) async {
-    
     final docRef = await FirebaseFirestore.instance
-                          .collection('addContactRequest')
-                          .add({'userId': _user.uid, 'contactUsername': username});
-            
+        .collection('addContactRequest')
+        .add({'userId': _user.uid, 'contactUsername': username});
+
     FirebaseFirestore.instance
-            .collection('addContactResponse')
-            .doc(_user.uid)
-            .snapshots()
-            .listen((event) {
-              
-               if(event.data()['docId'] == docRef.id){
-                 print('yay');
-                 return;
-               }
-            });
-              
-    
-    /*
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Something went wrong'),
-          content: Text(
-              'The username you specified does not exist or is already your contact. Please try again.'),
-          actions: [
-            FlatButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('Try again')),
-          ],
-        ),
-      );*/
+        .collection('addContactResponse')
+        .doc(_user.uid)
+        .snapshots()
+        .listen((event) {
+      if (event.data()['requestId'] == docRef.id) {
+        if (event.data()['contactUsernameExists'] != null || event.data()['contactAlreadyAdded'] != null) {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text('Something went wrong'),
+                    content: Text(
+                        'The username you specified does not exist or is already your contact. Please try again.'),
+                    actions: [
+                      FlatButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('Try again')),
+                    ],
+                  ));
+        }
+        else{
+          Navigator.of(context).pop();
+        }
+      }
+    });
+
     
   }
-
-  
 }
