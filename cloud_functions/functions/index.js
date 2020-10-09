@@ -23,13 +23,9 @@ exports.addNewContact = functions.region('europe-west1').firestore.document('add
                                 ]
                                 const [contactUsernameExists, ContactNotAdded] = await Promise.all(checks)
 
-                                if(!contactUsernameExists) {
-                                    await response('addContactResponse/'+userId, 
-                                            {'contactUsernameExists': false, 'requestId': requestId})
-                                }
-                                else if(!ContactNotAdded){
-                                    await response('addContactResponse/'+userId, 
-                                    {'contactAlreadyAdded': true, 'requestId': requestId})
+                                if(!contactUsernameExists || !ContactNotAdded){
+                                    await response('addContactResponse/'+userId,
+                                            {'requestId':requestId, 'done': false})
                                 }
 
                                 else {
@@ -58,7 +54,7 @@ exports.addNewContact = functions.region('europe-west1').firestore.document('add
                                                                                                 
 
 
-                                    })
+                    })
                                 
 
 exports.createAccount = functions.region('europe-west1').auth.user().onCreate((user) => {

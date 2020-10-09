@@ -19,7 +19,31 @@ class _ChatsScreenState extends State<ChatsScreen> {
       appBar: AppBar(
         title: Text('Chats'),
       ),
-      body: Container(),
+      body: FutureBuilder(
+        future: _getContacts(),
+        builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+          
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return CircularProgressIndicator();
+          }
+          return ListView.builder(
+            itemBuilder: (ctx, index){
+              return ListTile(
+                contentPadding: EdgeInsets.only(top: 15, left: 15, right: 15),
+                onTap: (){},
+                leading: CircleAvatar(child: Icon(Icons.person),),
+                title: Text(snapshot.data.docs[index]['contactUsername'],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                
+
+              );
+            },
+            itemCount: snapshot.data.size,
+            );
+
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddContactSheet(context),
         backgroundColor: Colors.lightBlue,
@@ -31,7 +55,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void _showAddContactSheet(BuildContext ctx) {
     final _controller = TextEditingController();
     showModalBottomSheet(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
         context: ctx,
         builder: (_) => Container(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -54,6 +78,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     children: [
                       Flexible(
                         child: TextField(
+                          
                           controller: _controller,
                           decoration: InputDecoration(
                             isDense: true,
@@ -96,27 +121,39 @@ class _ChatsScreenState extends State<ChatsScreen> {
         .doc(_user.uid)
         .snapshots()
         .listen((event) {
-      if (event.data()['requestId'] == docRef.id) {
-        if (event.data()['contactUsernameExists'] != null || event.data()['contactAlreadyAdded'] != null) {
-          showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    title: Text('Something went wrong'),
-                    content: Text(
-                        'The username you specified does not exist or is already your contact. Please try again.'),
-                    actions: [
-                      FlatButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Try again')),
-                    ],
-                  ));
-        }
-        else{
-          Navigator.of(context).pop();
-        }
-      }
-    });
+            if (event.data()['requestId'] == docRef.id) {
+              if (!event.data()['done']) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text('Something went wrong'),
+                          content: Text(
+                              'The username you specified does not exist or is already your contact. Please try again.'),
+                          actions: [
+                            FlatButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text('Try again')),
+                          ],
+                        ));
+                return;
+              }
+              else{
+                Navigator.of(context).pop();
+                return;
+              }
+            }
+        });
 
     
   }
+
+  Future<QuerySnapshot> _getContacts(){
+    return FirebaseFirestore.instance.collection('users/${_user.uid}/contacts').get();
+  }
+
+
+
+
 }
+
+
