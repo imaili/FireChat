@@ -46,7 +46,7 @@ exports.addNewContact = functions.region('europe-west1').firestore.document('add
                                     
                                     const snap = await admin.firestore().collection('users/')
                                                             .where('username', '==', contactUsername).get()
-                                    await admin.firestore().collection('users/'+snap.docs[0].id+'contacts')
+                                    await admin.firestore().collection('users/'+snap.docs[0].id+'/contacts')
                                                             .add({'contactUsername': snap.docs[0]['username']})
                                     
                                     

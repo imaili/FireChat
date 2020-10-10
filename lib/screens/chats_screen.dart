@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fire_chat/screens/conversation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +12,15 @@ class ChatsScreen extends StatefulWidget {
 
 class _ChatsScreenState extends State<ChatsScreen> {
   final _user = FirebaseAuth.instance.currentUser;
-
+  bool _contactsLoaded = false;
+  var _contacts = List<String>();
+  var _conversationsIds = List<String>();
+  @override
+  void initState() {
+    
+    _loadContacts();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -19,31 +28,30 @@ class _ChatsScreenState extends State<ChatsScreen> {
       appBar: AppBar(
         title: Text('Chats'),
       ),
-      body: FutureBuilder(
-        future: _getContacts(),
-        builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-          
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return CircularProgressIndicator();
-          }
-          return ListView.builder(
-            itemBuilder: (ctx, index){
-              return ListTile(
-                contentPadding: EdgeInsets.only(top: 15, left: 15, right: 15),
-                onTap: (){},
-                leading: CircleAvatar(child: Icon(Icons.person),),
-                title: Text(snapshot.data.docs[index]['contactUsername'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                
+      body: _contactsLoaded ? 
+            ListView.builder(
+              
+              itemBuilder: (ctx, index){
+                return ListTile(
+                  
+                  enabled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
+                  onTap: () => Navigator.of(context).pushNamed(
+                    ConversationScreen.route, arguments: {'username':_contacts[index], 'conversationId': _conversationsIds[index]}),
+                  leading: CircleAvatar(child: Icon(Icons.person),),
+                  title: Text(_contacts[index],
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                  
 
-              );
-            },
-            itemCount: snapshot.data.size,
-            );
+                );
+              },
+              itemCount: _contacts.length,
+              )
+           
+            : CircularProgressIndicator(),
 
-        },
-      ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddContactSheet(context),
         backgroundColor: Colors.lightBlue,
@@ -147,8 +155,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
     
   }
 
-  Future<QuerySnapshot> _getContacts(){
-    return FirebaseFirestore.instance.collection('users/${_user.uid}/contacts').get();
+  void _loadContacts() async {
+    final snap = await FirebaseFirestore.instance.collection('users/${_user.uid}/contacts').get();
+    
+    snap.docs.forEach((doc) {
+      _contacts.add(doc['contactUsername']);
+      _conversationsIds.add(doc['conversationId']);
+    });
+    setState(() {
+          _contactsLoaded = true;
+    });
   }
 
 
