@@ -28,23 +28,11 @@ class MyApp extends StatelessWidget {
               ),
               home: ChatsScreen(),
 
-              onGenerateRoute: (settings) {
-                  if (settings.name == ConversationScreen.route) {
-                    final arguments = settings.arguments as Map<String, String>;
-                    final username = arguments['username'];
-                    final conversationId = arguments['conversationId'];
-                    // Then, extract the required data from the arguments and
-                    // pass the data to the correct screen.
-                    return MaterialPageRoute(
-                      builder: (context) {
-                        return ConversationScreen(username, conversationId);
-                      });
-                  }
-              },
-
+             
               routes: {
                 AuthScreen.route: (ctx) => AuthScreen(),
                 ChatsScreen.route: (ctx) => ChatsScreen(),
+                ConversationScreen.route: (ctx) => ConversationScreen(),
 
               },
             );

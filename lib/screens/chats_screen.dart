@@ -37,7 +37,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   enabled: true,
                   contentPadding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
                   onTap: () => Navigator.of(context).pushNamed(
-                    ConversationScreen.route, arguments: {'username':_contacts[index], 'conversationId': _conversationsIds[index]}),
+                    ConversationScreen.route, arguments: {'contactUsername':_contacts[index], 'conversationId': _conversationsIds[index]}),
                   leading: CircleAvatar(child: Icon(Icons.person),),
                   title: Text(_contacts[index],
                                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -45,6 +45,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   
 
                 );
+                
               },
               itemCount: _contacts.length,
               )
