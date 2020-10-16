@@ -40,7 +40,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     ConversationScreen.route, arguments: {'contactUsername':_contacts[index], 'conversationId': _conversationsIds[index]}),
                   leading: CircleAvatar(child: Icon(Icons.person),),
                   title: Text(_contacts[index],
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                           ),
                   
 
