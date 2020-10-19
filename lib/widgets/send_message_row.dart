@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SendMessageRow extends StatefulWidget {
@@ -57,6 +58,7 @@ class _SendMessageRowState extends State<SendMessageRow> {
         .collection('conversations')
         .doc(widget._conversationId)
         .collection('messages')
-        .add({'text': text});
+        .add({'text': text, 'sentBy' : FirebaseAuth.instance.currentUser.email.split('@')[0]});
+        
   }
 }
