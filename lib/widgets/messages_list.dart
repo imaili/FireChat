@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:bubble/bubble.dart';
 
 class MessagesList extends StatelessWidget {
   const MessagesList({
@@ -25,7 +26,20 @@ class MessagesList extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
               itemBuilder: (ctx, index) {
-                return Text(snapshot.data.docs[index]['text']);
+                return Bubble(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+                    child: Text(snapshot.data.docs[index]['text'], textAlign: TextAlign.left,)),
+                  alignment: Alignment.centerRight,
+                  margin: BubbleEdges.only(left: 60, top: 10, right: 7),
+                  color: Color.fromRGBO(43, 184, 255, 1),   
+                  nip: BubbleNip.rightTop,
+                  elevation: 2,
+
+
+                  
+                  
+                );
               },
             );
         });
