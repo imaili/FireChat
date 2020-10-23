@@ -26,22 +26,37 @@ class MessagesList extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
               itemBuilder: (ctx, index) {
-                return Bubble(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
-                    child: Text(snapshot.data.docs[index]['text'], textAlign: TextAlign.left,)),
-                  alignment: Alignment.centerRight,
-                  margin: BubbleEdges.only(left: 60, top: 10, right: 7),
-                  color: Color.fromRGBO(43, 184, 255, 1),   
-                  nip: BubbleNip.rightTop,
-                  elevation: 2,
-
-
-                  
-                  
-                );
+                return _buildLeftBubble(snapshot.data.docs[index]['text']);
               },
             );
         });
   }
+
+
+  Widget _buildRightBubble(String text){
+    return Bubble(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+                    child: Text(text, textAlign: TextAlign.left,)),
+                  alignment: Alignment.centerRight,
+                  margin: BubbleEdges.only(left: 60, top: 10, right: 7),
+                  color: Color.fromRGBO(43, 184, 255, 1),   
+                  nip: BubbleNip.rightTop,
+                  elevation: 2,   
+                );
+  }
+
+  Widget _buildLeftBubble(String text){
+    
+    return Bubble(child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+                    child: Text(text, textAlign: TextAlign.left,)),
+                  alignment: Alignment.centerLeft,
+                  margin: BubbleEdges.only(right: 60, top: 10, left: 7),
+                  color: Color.fromRGBO(43, 184, 255, 1),   
+                  nip: BubbleNip.leftTop,
+                  elevation: 2,   
+                );
+  }
+  
 }
