@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble/bubble.dart';
 
@@ -18,7 +19,9 @@ class MessagesList extends StatelessWidget {
             .collection('conversations')
             .doc(_conversationId)
             .collection('messages')
-            .snapshots(),
+            .orderBy('createdAt')
+            .snapshots()
+            ,
         builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return CircularProgressIndicator();
@@ -26,7 +29,10 @@ class MessagesList extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
               itemBuilder: (ctx, index) {
-                return _buildLeftBubble(snapshot.data.docs[index]['text']);
+                return snapshot.data.docs[index]['sentBy'] ==  FirebaseAuth.instance.currentUser.email.split('@')[0] ? 
+                    _buildRightBubble(snapshot.data.docs[index]['text'])
+                    : _buildLeftBubble(snapshot.data.docs[index]['text']);
+
               },
             );
         });

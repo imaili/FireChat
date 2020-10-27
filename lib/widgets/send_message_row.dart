@@ -58,7 +58,9 @@ class _SendMessageRowState extends State<SendMessageRow> {
         .collection('conversations')
         .doc(widget._conversationId)
         .collection('messages')
-        .add({'text': text, 'sentBy' : FirebaseAuth.instance.currentUser.email.split('@')[0]});
+        .add({'text': text, 
+              'sentBy' : FirebaseAuth.instance.currentUser.email.split('@')[0], 
+              'createdAt': Timestamp.now()});
         
   }
 }
