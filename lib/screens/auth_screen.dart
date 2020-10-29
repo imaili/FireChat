@@ -94,6 +94,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 validator: (value) {
                   if (value.length < 4)
                     return 'Must be at least 4 characters long';
+                  else if (value.contains('@'))
+                    return 'Must not contains symbols';
                   return null;
                 },
               ),

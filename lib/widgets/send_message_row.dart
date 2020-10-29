@@ -12,6 +12,8 @@ class SendMessageRow extends StatefulWidget {
 
 class _SendMessageRowState extends State<SendMessageRow> {
   String _message = '';
+  final _controller = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class _SendMessageRowState extends State<SendMessageRow> {
         children: [
           Expanded(
             child: TextField(
-
+                controller: _controller,
                 minLines: 1,
                 maxLines: 4,
                 style: TextStyle(fontSize: 18),
@@ -61,6 +63,7 @@ class _SendMessageRowState extends State<SendMessageRow> {
         .add({'text': text, 
               'sentBy' : FirebaseAuth.instance.currentUser.email.split('@')[0], 
               'createdAt': Timestamp.now()});
+        _controller.clear();
         
   }
 }
